@@ -21,12 +21,12 @@ namespace Octree
     /// 
     /// Dynamic: The octree grows or shrinks as required when objects as added or removed.
     /// It also splits and merges nodes as appropriate. There is no maximum depth.
-    /// Nodes have a constant - <see cref="PointOctreeNode{T}.NumObjectsAllowed"/> - which sets the amount of items allowed in a node before it splits.
+    /// Nodes have a constant - <see cref="PointOctree{T}.Node.NumObjectsAllowed"/> - which sets the amount of items allowed in a node before it splits.
     /// 
     /// See also BoundsOctree, where objects are described by AABB bounds.
     /// </remarks>
     /// <typeparam name="T">The content of the octree can be anything, since the bounds data is supplied separately.</typeparam>
-    public class PointOctree<T> where T : class
+    public partial class PointOctree<T> where T : class
     {
         /// <summary>
         /// The logger
@@ -41,7 +41,7 @@ namespace Octree
         /// <summary>
         /// Root node of the octree
         /// </summary>
-        private PointOctreeNode<T> _rootNode;
+        private Node _rootNode;
 
         /// <summary>
         /// Size that the octree was on creation
@@ -71,7 +71,7 @@ namespace Octree
             Count = 0;
             _initialSize = initialWorldSize;
             _minSize = minNodeSize;
-            _rootNode = new PointOctreeNode<T>(_initialSize, _minSize, initialWorldPos);
+            _rootNode = new Node(_initialSize, _minSize, initialWorldPos);
         }
 
         // #### PUBLIC METHODS ####
@@ -189,17 +189,17 @@ namespace Octree
             int xDirection = direction.X >= 0 ? 1 : -1;
             int yDirection = direction.Y >= 0 ? 1 : -1;
             int zDirection = direction.Z >= 0 ? 1 : -1;
-            PointOctreeNode<T> oldRoot = _rootNode;
+            Node oldRoot = _rootNode;
             float half = _rootNode.SideLength / 2;
             float newLength = _rootNode.SideLength * 2;
             Point newCenter = _rootNode.Center + new Point(xDirection * half, yDirection * half, zDirection * half);
 
             // Create a new, bigger octree root node
-            _rootNode = new PointOctreeNode<T>(newLength, _minSize, newCenter);
+            _rootNode = new Node(newLength, _minSize, newCenter);
 
             // Create 7 new octree children to go with the old root as children of the new root
             int rootPos = GetRootPosIndex(xDirection, yDirection, zDirection);
-            PointOctreeNode<T>[] children = new PointOctreeNode<T>[8];
+            Node[] children = new Node[8];
             for (int i = 0; i < 8; i++)
             {
                 if (i == rootPos)
@@ -211,7 +211,7 @@ namespace Octree
                     xDirection = i % 2 == 0 ? -1 : 1;
                     yDirection = i > 3 ? -1 : 1;
                     zDirection = (i < 2 || (i > 3 && i < 6)) ? -1 : 1;
-                    children[i] = new PointOctreeNode<T>(
+                    children[i] = new Node(
                         _rootNode.SideLength,
                         _minSize,
                         newCenter + new Point(xDirection * half, yDirection * half, zDirection * half));
