@@ -34,11 +34,6 @@ namespace Octree
         private static readonly Logger Logger = LogManager.GetLogger("octree");
 
         /// <summary>
-        /// The total amount of objects currently in the tree
-        /// </summary>
-        public int Count { get; private set; }
-
-        /// <summary>
         /// Root node of the octree
         /// </summary>
         private Node _rootNode;
@@ -53,13 +48,27 @@ namespace Octree
         /// </summary>
         private readonly float _minSize;
 
-        /// <summary>
-        /// Constructor for the point octree.
-        /// </summary>
-        /// <param name="initialWorldSize">Size of the sides of the initial node. The octree will never shrink smaller than this.</param>
-        /// <param name="initialWorldPos">Position of the centre of the initial node.</param>
-        /// <param name="minNodeSize">Nodes will stop splitting if the new nodes would be smaller than this.</param>
-        public PointOctree(float initialWorldSize, Point initialWorldPos, float minNodeSize)
+	    /// <summary>
+	    /// The total amount of objects currently in the tree
+	    /// </summary>
+	    public int Count { get; private set; }
+
+	    /// <summary>
+	    /// Gets the bounding box that represents the whole octree
+	    /// </summary>
+	    /// <value>The bounding box of the root node.</value>
+	    public BoundingBox MaxBounds
+	    {
+		    get { return new BoundingBox(_rootNode.Center, new Point(_rootNode.SideLength, _rootNode.SideLength, _rootNode.SideLength)); }
+	    }
+
+		/// <summary>
+		/// Constructor for the point octree.
+		/// </summary>
+		/// <param name="initialWorldSize">Size of the sides of the initial node. The octree will never shrink smaller than this.</param>
+		/// <param name="initialWorldPos">Position of the centre of the initial node.</param>
+		/// <param name="minNodeSize">Nodes will stop splitting if the new nodes would be smaller than this.</param>
+		public PointOctree(float initialWorldSize, Point initialWorldPos, float minNodeSize)
         {
             if (minNodeSize > initialWorldSize)
             {

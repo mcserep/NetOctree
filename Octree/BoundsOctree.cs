@@ -42,11 +42,6 @@ namespace Octree
         private static readonly Logger Logger = LogManager.GetLogger("octree");
 
         /// <summary>
-        /// The total amount of objects currently in the tree
-        /// </summary>
-        public int Count { get; private set; }
-
-        /// <summary>
         /// Root node of the octree
         /// </summary>
         private Node _rootNode;
@@ -69,11 +64,16 @@ namespace Octree
         /// </summary>
         private readonly float _minSize;
 
-        /// <summary>
-        /// Gets the bounding box that represents the whole octree
-        /// </summary>
-        /// <value>The bounding box of the root node.</value>
-        public BoundingBox MaxBounds
+	    /// <summary>
+	    /// The total amount of objects currently in the tree
+	    /// </summary>
+	    public int Count { get; private set; }
+
+		/// <summary>
+		/// Gets the bounding box that represents the whole octree
+		/// </summary>
+		/// <value>The bounding box of the root node.</value>
+		public BoundingBox MaxBounds
         {
             get { return _rootNode.Bounds; }
         }
