@@ -62,7 +62,8 @@ namespace Octree
             get
             {
                 Point copy = this;
-                return copy.Normalized;
+	            copy.Normalize();
+				return copy;
             }
         }
 
