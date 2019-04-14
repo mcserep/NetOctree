@@ -98,7 +98,7 @@ namespace Octree
             _initialSize = initialWorldSize;
             _minSize = minNodeSize;
             _looseness = MathExtensions.Clamp(loosenessVal, 1.0f, 2.0f);
-            _rootNode = new Node(_initialSize, _minSize, loosenessVal, initialWorldPos);
+            _rootNode = new Node(_initialSize, _minSize, _looseness, initialWorldPos);
         }
 
         // #### PUBLIC METHODS ####
