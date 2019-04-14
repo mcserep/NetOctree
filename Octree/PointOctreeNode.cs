@@ -297,7 +297,7 @@ namespace Octree
                 {
                     return this;
                 }
-                if (_objects.Count == 0 && _children.Length == 0)
+                if (_objects.Count == 0 && (_children == null || _children.Length == 0))
                 {
                     return this;
                 }
