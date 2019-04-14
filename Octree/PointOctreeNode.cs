@@ -59,7 +59,7 @@ namespace Octree
             private BoundingBox[] _childBounds;
 
             /// <summary>
-            /// If there are already numObjectsAllowed in a node, we split it into children
+            /// If there are already NumObjectsAllowed in a node, we split it into children
             /// </summary>
             /// <remarks>
             /// A generally good number seems to be something around 8-15
@@ -70,6 +70,14 @@ namespace Octree
             /// For reverting the bounds size after temporary changes
             /// </summary>
             private Point _actualBoundsSize;
+
+            /// <summary>
+            /// Gets a value indicating whether this node has children
+            /// </summary>
+            private bool HasChildren
+            {
+                get { return _children != null; }
+            }
 
             /// <summary>
             /// An object in the octree
@@ -407,42 +415,46 @@ namespace Octree
             private void SubAdd(T obj, Point objPos)
             {
                 // We know it fits at this level if we've got this far
-                // Just add if few objects are here, or children would be below min size
-                if (_objects.Count < NumObjectsAllowed || (SideLength / 2) < _minSize)
+
+                // We always put things in the deepest possible child
+                // So we can skip checks and simply move down if there are children aleady
+                if (!HasChildren)
                 {
-                    OctreeObject newObj = new OctreeObject { Obj = obj, Pos = objPos };
-                    _objects.Add(newObj);
-                }
-                else
-                {
-                    // Enough objects in this node already: Create new children
-                    // Create the 8 children
+                    // Just add if few objects are here, or children would be below min size
+                    if (_objects.Count < NumObjectsAllowed || (SideLength / 2) < _minSize)
+                    {
+                        OctreeObject newObj = new OctreeObject { Obj = obj, Pos = objPos };
+                        _objects.Add(newObj);
+                        return; // We're done. No children yet
+                    }
+
+                    // Enough objects in this node already: Create the 8 children
                     int bestFitChild;
                     if (_children == null)
                     {
                         Split();
                         if (_children == null)
                         {
-                            Logger.Debug("Child creation failed for an unknown reason. Early exit.");
+                            Logger.Error("Child creation failed for an unknown reason. Early exit.");
                             return;
                         }
 
-                        // Now that we have the new children, see if this node's existing objects would fit there
+                        // Now that we have the new children, move this node's existing objects into them
                         for (int i = _objects.Count - 1; i >= 0; i--)
                         {
                             OctreeObject existingObj = _objects[i];
                             // Find which child the object is closest to based on where the
-                            // object's center is located in relation to the octree's center.
+                            // object's center is located in relation to the octree's center
                             bestFitChild = BestFitChild(existingObj.Pos);
                             _children[bestFitChild].SubAdd(existingObj.Obj, existingObj.Pos); // Go a level deeper					
                             _objects.Remove(existingObj); // Remove from here
                         }
                     }
-
-                    // Now handle the new object we're adding now
-                    bestFitChild = BestFitChild(objPos);
-                    _children[bestFitChild].SubAdd(obj, objPos);
                 }
+
+                // Handle the new object we're adding now
+                int bestFit = BestFitChild(objPos);
+                _children[bestFit].SubAdd(obj, objPos);
             }
 
             /// <summary>

@@ -26,7 +26,7 @@ namespace Octree
     /// See also BoundsOctree, where objects are described by AABB bounds.
     /// </remarks>
     /// <typeparam name="T">The content of the octree can be anything, since the bounds data is supplied separately.</typeparam>
-    public partial class PointOctree<T> where T : class
+    public partial class PointOctree<T>
     {
         /// <summary>
         /// The logger

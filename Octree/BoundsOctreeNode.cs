@@ -68,12 +68,20 @@ namespace Octree
             private BoundingBox[] _childBounds;
 
             /// <summary>
-            /// If there are already numObjectsAllowed in a node, we split it into children
+            /// If there are already NumObjectsAllowed in a node, we split it into children
             /// </summary>
             /// <remarks>
             /// A generally good number seems to be something around 8-15
             /// </remarks>
             private const int NumObjectsAllowed = 8;
+
+            /// <summary>
+            /// Gets a value indicating whether this node has children
+            /// </summary>
+            private bool HasChildren
+            {
+                get { return _children != null; }
+            }
 
             /// <summary>
             /// An object in the octree
@@ -493,16 +501,20 @@ namespace Octree
             private void SubAdd(T obj, BoundingBox objBounds)
             {
                 // We know it fits at this level if we've got this far
-                // Just add if few objects are here, or children would be below min size
-                if (_objects.Count < NumObjectsAllowed || (BaseLength / 2) < _minSize)
-                {
-                    OctreeObject newObj = new OctreeObject { Obj = obj, Bounds = objBounds };
-                    _objects.Add(newObj);
-                }
-                else
-                {
-                    // Fits at this level, but we can go deeper. Would it fit there?
 
+                // We always put things in the deepest possible child
+                // So we can skip some checks if there are children already
+                if (!HasChildren)
+                {
+                    // Just add if few objects are here, or children would be below min size
+                    if (_objects.Count < NumObjectsAllowed || (BaseLength / 2) < _minSize)
+                    {
+                        OctreeObject newObj = new OctreeObject { Obj = obj, Bounds = objBounds };
+                        _objects.Add(newObj);
+                        return; // We're done. No children yet
+                    }
+
+                    // Fits at this level, but we can go deeper. Would it fit there?
                     // Create the 8 children
                     int bestFitChild;
                     if (_children == null)
@@ -510,7 +522,7 @@ namespace Octree
                         Split();
                         if (_children == null)
                         {
-                            Logger.Debug("Child creation failed for an unknown reason. Early exit.");
+                            Logger.Error("Child creation failed for an unknown reason. Early exit.");
                             return;
                         }
 
@@ -519,31 +531,32 @@ namespace Octree
                         {
                             OctreeObject existingObj = _objects[i];
                             // Find which child the object is closest to based on where the
-                            // object's center is located in relation to the octree's center.
+                            // object's center is located in relation to the octree's center
                             bestFitChild = BestFitChild(existingObj.Bounds);
                             // Does it fit?
                             if (Encapsulates(_children[bestFitChild]._bounds, existingObj.Bounds))
                             {
-                                _children[bestFitChild]
-                                    .SubAdd(existingObj.Obj, existingObj.Bounds); // Go a level deeper					
+                                _children[bestFitChild].SubAdd(existingObj.Obj, existingObj.Bounds); // Go a level deeper					
                                 _objects.Remove(existingObj); // Remove from here
                             }
                         }
                     }
+                }
 
-                    // Now handle the new object we're adding now
-                    bestFitChild = BestFitChild(objBounds);
-                    if (Encapsulates(_children[bestFitChild]._bounds, objBounds))
-                    {
-                        _children[bestFitChild].SubAdd(obj, objBounds);
-                    }
-                    else
-                    {
-                        OctreeObject newObj = new OctreeObject { Obj = obj, Bounds = objBounds };
-                        _objects.Add(newObj);
-                    }
+                // Handle the new object we're adding now
+                int bestFit = BestFitChild(objBounds);
+                if (Encapsulates(_children[bestFit]._bounds, objBounds))
+                {
+                    _children[bestFit].SubAdd(obj, objBounds);
+                }
+                else
+                {
+                    // Didn't fit in a child. We'll have to it to this node instead
+                    OctreeObject newObj = new OctreeObject { Obj = obj, Bounds = objBounds };
+                    _objects.Add(newObj);
                 }
             }
+
             /// <summary>
             /// Private counterpart to the public <see cref="Remove(T, BoundingBox)"/> method.
             /// </summary>
