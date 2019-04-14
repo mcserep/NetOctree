@@ -1,7 +1,7 @@
 NetOctree
 ===========
 
-A dynamic octree implementation written in C# for the .NET Framework.
+A dynamic octree implementation written in C# as a .NET Standard 2.0 library.
 
 There are two octree implementations here:    
 **BoundsOctree** stores any type of object, with the object boundaries defined as an axis-aligned bounding box. It's a dynamic octree and can also be a loose octree.   

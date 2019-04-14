@@ -2,8 +2,7 @@
 	<s:String x:Key="/Default/CodeStyle/FileHeader/FileHeaderText/@EntryValue">&lt;copyright file="$FILENAME$"&gt;&#xD;
     Distributed under the BSD Licence (see LICENCE file).&#xD;
     &#xD;
-    Copyright (c) 2014, Nition&#xD;
-    Copyright (c) 2017, Máté Cserép&#xD;
+    Copyright (c) 2014, Nition, http://www.momentstudio.co.nz/&#xD;
+    Copyright (c) 2017, Máté Cserép, http://codenet.hu&#xD;
     All rights reserved.&#xD;
-&lt;/copyright&gt;&#xD;
-</s:String></wpf:ResourceDictionary>
+&lt;/copyright&gt;</s:String></wpf:ResourceDictionary>
