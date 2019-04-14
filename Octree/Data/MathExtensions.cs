@@ -1,8 +1,8 @@
 ﻿// <copyright file="MathExtensions.cs">
 //     Distributed under the BSD Licence (see LICENCE file).
 //     
-//     Copyright (c) 2014, Nition
-//     Copyright (c) 2017, Máté Cserép
+//     Copyright (c) 2014, Nition, http://www.momentstudio.co.nz/
+//     Copyright (c) 2017, Máté Cserép, http://codenet.hu
 //     All rights reserved.
 // </copyright>
 namespace Octree
