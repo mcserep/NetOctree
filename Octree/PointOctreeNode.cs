@@ -375,6 +375,25 @@ namespace Octree
             }
 
             /// <summary>
+            /// Checks if this node or anything below it has something in it.
+            /// </summary>
+            /// <returns>True if this node or any of its children, grandchildren etc have something in them</returns>
+            public bool HasAnyObjects()
+            {
+                if (_objects.Count > 0) return true;
+
+                if (_children != null)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        if (_children[i].HasAnyObjects()) return true;
+                    }
+                }
+
+                return false;
+            }
+
+            /// <summary>
             /// Returns the squared distance to the given ray from a point.
             /// </summary>
             /// <param name="ray">The ray.</param>
@@ -576,22 +595,6 @@ namespace Octree
                     }
                 }
                 return totalObjects <= NumObjectsAllowed;
-            }
-
-            // Returns true if this node or any of its children, grandchildren etc have something in them
-            private bool HasAnyObjects()
-            {
-                if (_objects.Count > 0) return true;
-
-                if (_children != null)
-                {
-                    for (int i = 0; i < 8; i++)
-                    {
-                        if (_children[i].HasAnyObjects()) return true;
-                    }
-                }
-
-                return false;
             }
         }
     }

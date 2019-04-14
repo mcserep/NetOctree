@@ -206,29 +206,32 @@ namespace Octree
             // Create a new, bigger octree root node
             _rootNode = new Node(newLength, _minSize, newCenter);
 
-            // Create 7 new octree children to go with the old root as children of the new root
-            int rootPos = _rootNode.BestFitChild(oldRoot.Center);
-            Node[] children = new Node[8];
-            for (int i = 0; i < 8; i++)
+            if (oldRoot.HasAnyObjects())
             {
-                if (i == rootPos)
+                // Create 7 new octree children to go with the old root as children of the new root
+                int rootPos = _rootNode.BestFitChild(oldRoot.Center);
+                Node[] children = new Node[8];
+                for (int i = 0; i < 8; i++)
                 {
-                    children[i] = oldRoot;
+                    if (i == rootPos)
+                    {
+                        children[i] = oldRoot;
+                    }
+                    else
+                    {
+                        xDirection = i % 2 == 0 ? -1 : 1;
+                        yDirection = i > 3 ? -1 : 1;
+                        zDirection = (i < 2 || (i > 3 && i < 6)) ? -1 : 1;
+                        children[i] = new Node(
+                            oldRoot.SideLength,
+                            _minSize,
+                            newCenter + new Point(xDirection * half, yDirection * half, zDirection * half));
+                    }
                 }
-                else
-                {
-                    xDirection = i % 2 == 0 ? -1 : 1;
-                    yDirection = i > 3 ? -1 : 1;
-                    zDirection = (i < 2 || (i > 3 && i < 6)) ? -1 : 1;
-                    children[i] = new Node(
-                        oldRoot.SideLength,
-                        _minSize,
-                        newCenter + new Point(xDirection * half, yDirection * half, zDirection * half));
-                }
-            }
 
-            // Attach the new children to the new root node
-            _rootNode.SetChildren(children);
+                // Attach the new children to the new root node
+                _rootNode.SetChildren(children);
+            }
         }
 
         /// <summary>
