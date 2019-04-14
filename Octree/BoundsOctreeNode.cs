@@ -375,7 +375,7 @@ namespace Octree
                 for (int i = 0; i < _objects.Count; i++)
                 {
                     OctreeObject curObj = _objects[i];
-                    int newBestFit = BestFitChild(curObj.Bounds);
+                    int newBestFit = BestFitChild(curObj.Bounds.Center);
                     if (i == 0 || newBestFit == bestFit)
                     {
                         // In same octant as the other(s). Does it fit completely inside that octant?
@@ -437,6 +437,18 @@ namespace Octree
 
                 // We have children. Use the appropriate child as the new root node
                 return _children[bestFit];
+            }
+
+            /// <summary>
+            /// Find which child node this object would be most likely to fit in.
+            /// </summary>
+            /// <param name="objBoundsCenter">The object's bounds center.</param>
+            /// <returns>One of the eight child octants.</returns>
+            public int BestFitChild(Point objBoundsCenter)
+            {
+                return (objBoundsCenter.X <= Center.X ? 0 : 1)
+                       + (objBoundsCenter.Y >= Center.Y ? 0 : 4)
+                       + (objBoundsCenter.Z <= Center.Z ? 0 : 2);
             }
 
             /// <summary>
@@ -516,7 +528,6 @@ namespace Octree
 
                     // Fits at this level, but we can go deeper. Would it fit there?
                     // Create the 8 children
-                    int bestFitChild;
                     if (_children == null)
                     {
                         Split();
@@ -532,7 +543,7 @@ namespace Octree
                             OctreeObject existingObj = _objects[i];
                             // Find which child the object is closest to based on where the
                             // object's center is located in relation to the octree's center
-                            bestFitChild = BestFitChild(existingObj.Bounds);
+                            int bestFitChild = BestFitChild(existingObj.Bounds.Center);
                             // Does it fit?
                             if (Encapsulates(_children[bestFitChild]._bounds, existingObj.Bounds))
                             {
@@ -544,7 +555,7 @@ namespace Octree
                 }
 
                 // Handle the new object we're adding now
-                int bestFit = BestFitChild(objBounds);
+                int bestFit = BestFitChild(objBounds.Center);
                 if (Encapsulates(_children[bestFit]._bounds, objBounds))
                 {
                     _children[bestFit].SubAdd(obj, objBounds);
@@ -578,7 +589,7 @@ namespace Octree
 
                 if (!removed && _children != null)
                 {
-                    int bestFitChild = BestFitChild(objBounds);
+                    int bestFitChild = BestFitChild(objBounds.Center);
                     removed = _children[bestFitChild].SubRemove(obj, objBounds);
                 }
 
@@ -675,17 +686,6 @@ namespace Octree
             private static bool Encapsulates(BoundingBox outerBounds, BoundingBox innerBounds)
             {
                 return outerBounds.Contains(innerBounds.Min) && outerBounds.Contains(innerBounds.Max);
-            }
-
-            /// <summary>
-            /// Find which child node this object would be most likely to fit in.
-            /// </summary>
-            /// <param name="objBounds">The object's bounds.</param>
-            /// <returns>One of the eight child octants.</returns>
-            private int BestFitChild(BoundingBox objBounds)
-            {
-                return (objBounds.Center.X <= Center.X ? 0 : 1) + (objBounds.Center.Y >= Center.Y ? 0 : 4)
-                       + (objBounds.Center.Z <= Center.Z ? 0 : 2);
             }
 
             /// <summary>

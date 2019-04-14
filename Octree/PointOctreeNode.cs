@@ -365,6 +365,16 @@ namespace Octree
             }
 
             /// <summary>
+            /// Find which child node this object would be most likely to fit in.
+            /// </summary>
+            /// <param name="objPos">The object's position.</param>
+            /// <returns>One of the eight child octants.</returns>
+            public int BestFitChild(Point objPos)
+            {
+                return (objPos.X <= Center.X ? 0 : 1) + (objPos.Y >= Center.Y ? 0 : 4) + (objPos.Z <= Center.Z ? 0 : 2);
+            }
+
+            /// <summary>
             /// Returns the squared distance to the given ray from a point.
             /// </summary>
             /// <param name="ray">The ray.</param>
@@ -543,16 +553,6 @@ namespace Octree
             private static bool Encapsulates(BoundingBox outerBounds, Point point)
             {
                 return outerBounds.Contains(point);
-            }
-
-            /// <summary>
-            /// Find which child node this object would be most likely to fit in.
-            /// </summary>
-            /// <param name="objPos">The object's position.</param>
-            /// <returns>One of the eight child octants.</returns>
-            private int BestFitChild(Point objPos)
-            {
-                return (objPos.X <= Center.X ? 0 : 1) + (objPos.Y >= Center.Y ? 0 : 4) + (objPos.Z <= Center.Z ? 0 : 2);
             }
 
             /// <summary>

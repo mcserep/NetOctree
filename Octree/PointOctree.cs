@@ -148,7 +148,7 @@ namespace Octree
         }
 
         /// <summary>
-        /// Return objects that are within <paramref name="maxDistance"/> of the specified ray.
+        /// Returns objects that are within <paramref name="maxDistance"/> of the specified ray.
         /// If none, returns an empty array (not null).
         /// </summary>
         /// <param name="ray">The ray. Passing as ref to improve performance since it won't have to be copied.</param>
@@ -162,11 +162,11 @@ namespace Octree
         }
 
         /// <summary>
-        /// Return objects that are within <paramref name="maxDistance"/> of the specified position.
+        /// Returns objects that are within <paramref name="maxDistance"/> of the specified position.
         /// If none, returns an empty array (not null).
         /// </summary>
         /// <param name="position">The position. Passing as ref to improve performance since it won't have to be copied.</param>
-        /// <param name="maxDistance">Maximum distance from the ray to consider.</param>
+        /// <param name="maxDistance">Maximum distance from the position to consider.</param>
         /// <returns>Objects within range.</returns>
         public T[] GetNearby(Point position, float maxDistance)
         {
@@ -176,7 +176,7 @@ namespace Octree
         }
 
         /// <summary>
-        /// Return all objects in the tree.
+        /// Returns all objects in the tree.
         /// If none, returns an empty array (not null).
         /// </summary>
         /// <returns>All objects.</returns>
@@ -207,7 +207,7 @@ namespace Octree
             _rootNode = new Node(newLength, _minSize, newCenter);
 
             // Create 7 new octree children to go with the old root as children of the new root
-            int rootPos = GetRootPosIndex(xDirection, yDirection, zDirection);
+            int rootPos = _rootNode.BestFitChild(oldRoot.Center);
             Node[] children = new Node[8];
             for (int i = 0; i < 8; i++)
             {
@@ -221,7 +221,7 @@ namespace Octree
                     yDirection = i > 3 ? -1 : 1;
                     zDirection = (i < 2 || (i > 3 && i < 6)) ? -1 : 1;
                     children[i] = new Node(
-                        _rootNode.SideLength,
+                        oldRoot.SideLength,
                         _minSize,
                         newCenter + new Point(xDirection * half, yDirection * half, zDirection * half));
                 }
@@ -237,21 +237,6 @@ namespace Octree
         private void Shrink()
         {
             _rootNode = _rootNode.ShrinkIfPossible(_initialSize);
-        }
-
-        /// <summary>
-        /// Used when growing the octree. Works out where the old root node would fit inside a new, larger root node.
-        /// </summary>
-        /// <param name="xDir">X direction of growth. 1 or -1.</param>
-        /// <param name="yDir">Y direction of growth. 1 or -1.</param>
-        /// <param name="zDir">Z direction of growth. 1 or -1.</param>
-        /// <returns>Octant where the root node should be.</returns>
-        private static int GetRootPosIndex(int xDir, int yDir, int zDir)
-        {
-            int result = xDir > 0 ? 1 : 0;
-            if (yDir < 0) result += 4;
-            if (zDir > 0) result += 2;
-            return result;
         }
     }
 }
