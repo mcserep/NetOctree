@@ -157,7 +157,7 @@ namespace Octree
         public T[] GetNearby(Ray ray, float maxDistance)
         {
             List<T> collidingWith = new List<T>();
-            _rootNode.GetNearby(ref ray, ref maxDistance, collidingWith);
+            _rootNode.GetNearby(ref ray, maxDistance, collidingWith);
             return collidingWith.ToArray();
         }
 
@@ -171,7 +171,7 @@ namespace Octree
         public T[] GetNearby(Point position, float maxDistance)
         {
             List<T> collidingWith = new List<T>();
-            _rootNode.GetNearby(ref position, ref maxDistance, collidingWith);
+            _rootNode.GetNearby(ref position, maxDistance, collidingWith);
             return collidingWith.ToArray();
         }
 

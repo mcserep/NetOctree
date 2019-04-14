@@ -177,7 +177,7 @@ namespace Octree
             /// <param name="maxDistance">Maximum distance from the ray to consider.</param>
             /// <param name="result">List result.</param>
             /// <returns>Objects within range.</returns>
-            public void GetNearby(ref Ray ray, ref float maxDistance, List<T> result)
+            public void GetNearby(ref Ray ray, float maxDistance, List<T> result)
             {
                 // Does the ray hit this node at all?
                 // Note: Expanding the bounds is not exactly the same as a real distance check, but it's fast.
@@ -204,7 +204,7 @@ namespace Octree
                 {
                     for (int i = 0; i < 8; i++)
                     {
-                        _children[i].GetNearby(ref ray, ref maxDistance, result);
+                        _children[i].GetNearby(ref ray, maxDistance, result);
                     }
                 }
             }
@@ -216,7 +216,7 @@ namespace Octree
             /// <param name="maxDistance">Maximum distance from the position to consider.</param>
             /// <param name="result">List result.</param>
             /// <returns>Objects within range.</returns>
-            public void GetNearby(ref Point position, ref float maxDistance, List<T> result)
+            public void GetNearby(ref Point position, float maxDistance, List<T> result)
             {
                 // Does the node contain this position at all?
                 // Note: Expanding the bounds is not exactly the same as a real distance check, but it's fast.
@@ -243,7 +243,7 @@ namespace Octree
                 {
                     for (int i = 0; i < 8; i++)
                     {
-                        _children[i].GetNearby(ref position, ref maxDistance, result);
+                        _children[i].GetNearby(ref position, maxDistance, result);
                     }
                 }
             }
