@@ -16,4 +16,4 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --framework netstandard2.0 --configuration Release --no-restore

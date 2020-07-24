@@ -1,10 +1,15 @@
 language: csharp
-mono: none
-dotnet: 2.1
 solution: Octree.sln
 
-install:
-  - dotnet restore
-
-script:
-  - dotnet build
+jobs:
+  include:
+    - name: ".NET Core"
+      dotnet: 2.1
+      mono: none
+      install:
+         - dotnet restore
+      script:
+         - dotnet build --framework netstandard2.0 --configuration Release
+    - name: "Mono Framework"
+      mono: latest
+      # use default install and script
