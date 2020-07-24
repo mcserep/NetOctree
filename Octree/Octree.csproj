@@ -1,19 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
     <PackageId>NetOctree</PackageId>
     <Description>A dynamic, loose octree implementation written in C#</Description>
     <Company>Ericsson</Company>
     <Authors>Máté Cserép</Authors>
     <Copyright>Copyright © Máté Cserép 2017-2020</Copyright>
     <PackageProjectUrl>https://github.com/mcserep/NetOctree</PackageProjectUrl>
-    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageLicenseExpression>BSD-2-Clause</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageIconUrl />
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
