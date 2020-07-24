@@ -6,13 +6,22 @@
     <Description>A dynamic, loose octree implementation written in C#</Description>
     <Company>Ericsson</Company>
     <Authors>Máté Cserép</Authors>
-    <Copyright>Copyright © Máté Cserép 2017</Copyright>
+    <Copyright>Copyright © Máté Cserép 2017-2020</Copyright>
     <PackageProjectUrl>https://github.com/mcserep/NetOctree</PackageProjectUrl>
-    <PackageLicenseUrl>https://opensource.org/licenses/BSD-2-Clause</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageLicenseExpression>BSD-2-Clause</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl />
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Octree.csproj.DotSettings" />
+    <None Include="icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.6.2" />
+    <PackageReference Include="NLog" Version="4.7.2" />
   </ItemGroup>
 
 </Project>
