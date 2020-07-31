@@ -1,9 +1,29 @@
-[![Build Status](https://travis-ci.com/mcserep/NetOctree.svg?branch=master)](https://travis-ci.com/mcserep/NetOctree)
-
 NetOctree
 ===========
 
 A dynamic octree implementation written in C# as a .NET Standard 2.0 library.
+
+[![Build Status](https://travis-ci.com/mcserep/NetOctree.svg?branch=master)](https://travis-ci.com/mcserep/NetOctree)
+[![NuGet Version](https://img.shields.io/nuget/v/NetOctree)](https://github.com/mcserep/NetOctree)
+[![NuGet Download](https://img.shields.io/nuget/dt/NetOctree)](https://github.com/mcserep/NetOctree)
+
+How to get it?
+-----------
+
+The easiest way to get **NetOctree** is to install from the [NuGet package manager](https://docs.microsoft.com/hu-hu/nuget/install-nuget-client-tools).
+
+Use the Package Manager Console:
+```
+PM> Install-Package NetOctree
+```
+
+Or the `dotnet` command line interface:
+```
+dotnet add package NetOctree
+```
+
+Description
+-----------
 
 There are two octree implementations here:    
 **BoundsOctree** stores any type of object, with the object boundaries defined as an axis-aligned bounding box. It's a dynamic octree and can also be a loose octree.   
@@ -33,7 +53,7 @@ Another note: You may notice when viewing the bounds visualisation that the chil
 This seems to be the standard way that loose octrees are done. I did an experiment: I tried making the child node dimensions looseness * the parent's actual size, instead of looseness * the parent's base size before looseness is applied. This seems more intuitively correct to me, but performance seems to be about the same.
 
 Example Usage
-===========
+-----------
 
 **Create An Octree**
 
