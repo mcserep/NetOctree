@@ -8,6 +8,7 @@
 namespace Octree
 {
     using System.Collections.Generic;
+    using System.Numerics;
     using NLog;
 
     /// <summary>
@@ -23,7 +24,7 @@ namespace Octree
     /// It also splits and merges nodes as appropriate. There is no maximum depth.
     /// Nodes have a constant - <see cref="PointOctree{T}.Node.NumObjectsAllowed"/> - which sets the amount of items allowed in a node before it splits.
     /// 
-    /// See also BoundsOctree, where objects are described by AABB bounds.
+    /// See also <see cref="BoundsOctree{T}"/>, where objects are described by AABB bounds.
     /// </remarks>
     /// <typeparam name="T">The content of the octree can be anything, since the bounds data is supplied separately.</typeparam>
     public partial class PointOctree<T>
@@ -59,7 +60,7 @@ namespace Octree
 	    /// <value>The bounding box of the root node.</value>
 	    public BoundingBox MaxBounds
 	    {
-		    get { return new BoundingBox(_rootNode.Center, new Point(_rootNode.SideLength, _rootNode.SideLength, _rootNode.SideLength)); }
+		    get { return new BoundingBox(_rootNode.Center, new Vector3(_rootNode.SideLength, _rootNode.SideLength, _rootNode.SideLength)); }
 	    }
 
 		/// <summary>
@@ -68,7 +69,7 @@ namespace Octree
 		/// <param name="initialWorldSize">Size of the sides of the initial node. The octree will never shrink smaller than this.</param>
 		/// <param name="initialWorldPos">Position of the centre of the initial node.</param>
 		/// <param name="minNodeSize">Nodes will stop splitting if the new nodes would be smaller than this.</param>
-		public PointOctree(float initialWorldSize, Point initialWorldPos, float minNodeSize)
+		public PointOctree(float initialWorldSize, Vector3 initialWorldPos, float minNodeSize)
         {
             if (minNodeSize > initialWorldSize)
             {
@@ -90,7 +91,7 @@ namespace Octree
         /// </summary>
         /// <param name="obj">Object to add.</param>
         /// <param name="objPos">Position of the object.</param>
-        public void Add(T obj, Point objPos)
+        public void Add(T obj, Vector3 objPos)
         {
             // Add object or expand the octree until it can be added
             int count = 0; // Safety check against infinite/excessive growth
@@ -133,7 +134,7 @@ namespace Octree
         /// <param name="obj">Object to remove.</param>
         /// <param name="objPos">Position of the object.</param>
         /// <returns>True if the object was removed successfully.</returns>
-        public bool Remove(T obj, Point objPos)
+        public bool Remove(T obj, Vector3 objPos)
         {
             bool removed = _rootNode.Remove(obj, objPos);
 
@@ -168,7 +169,7 @@ namespace Octree
         /// <param name="position">The position. Passing as ref to improve performance since it won't have to be copied.</param>
         /// <param name="maxDistance">Maximum distance from the position to consider.</param>
         /// <returns>Objects within range.</returns>
-        public T[] GetNearby(Point position, float maxDistance)
+        public T[] GetNearby(Vector3 position, float maxDistance)
         {
             List<T> collidingWith = new List<T>();
             _rootNode.GetNearby(ref position, maxDistance, collidingWith);
@@ -193,7 +194,7 @@ namespace Octree
         /// Grow the octree to fit in all objects.
         /// </summary>
         /// <param name="direction">Direction to grow.</param>
-        private void Grow(Point direction)
+        private void Grow(Vector3 direction)
         {
             int xDirection = direction.X >= 0 ? 1 : -1;
             int yDirection = direction.Y >= 0 ? 1 : -1;
@@ -201,7 +202,7 @@ namespace Octree
             Node oldRoot = _rootNode;
             float half = _rootNode.SideLength / 2;
             float newLength = _rootNode.SideLength * 2;
-            Point newCenter = _rootNode.Center + new Point(xDirection * half, yDirection * half, zDirection * half);
+            Vector3 newCenter = _rootNode.Center + new Vector3(xDirection * half, yDirection * half, zDirection * half);
 
             // Create a new, bigger octree root node
             _rootNode = new Node(newLength, _minSize, newCenter);
@@ -225,7 +226,7 @@ namespace Octree
                         children[i] = new Node(
                             oldRoot.SideLength,
                             _minSize,
-                            newCenter + new Point(xDirection * half, yDirection * half, zDirection * half));
+                            newCenter + new Vector3(xDirection * half, yDirection * half, zDirection * half));
                     }
                 }
 

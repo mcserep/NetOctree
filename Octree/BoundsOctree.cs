@@ -8,12 +8,13 @@
 namespace Octree
 {
     using System.Collections.Generic;
+    using System.Numerics;
     using NLog;
 
     /// <summary>
     /// A Dynamic, Loose Octree for storing any objects that can be described with AABB bounds
     /// </summary>
-    /// <seealso cref="BoundsOctree{T}"/>
+    /// <seealso cref="PointOctree{T}"/>
     /// <remarks>
     /// Octree:	An octree is a tree data structure which divides 3D space into smaller partitions (nodes)
     /// and places objects into the appropriate nodes. This allows fast access to objects
@@ -31,7 +32,7 @@ namespace Octree
     /// they actually give much better performance than using Foreach, even in the compiled build.
     /// Using a LINQ expression is worse again than Foreach.
     /// 
-    /// See also: PointOctree, where objects are stored as single points and some code can be simplified
+    /// See also: <see cref="PointOctree{T}"/>, where objects are stored as single points and some code can be simplified
     /// </remarks>
     /// <typeparam name="T">The content of the octree can be anything, since the bounds data is supplied separately.</typeparam>
     public partial class BoundsOctree<T>
@@ -85,7 +86,7 @@ namespace Octree
         /// <param name="initialWorldPos">Position of the center of the initial node.</param>
         /// <param name="minNodeSize">Nodes will stop splitting if the new nodes would be smaller than this (metres).</param>
         /// <param name="loosenessVal">Clamped between 1 and 2. Values > 1 let nodes overlap.</param>
-        public BoundsOctree(float initialWorldSize, Point initialWorldPos, float minNodeSize, float loosenessVal)
+        public BoundsOctree(float initialWorldSize, Vector3 initialWorldPos, float minNodeSize, float loosenessVal)
         {
             if (minNodeSize > initialWorldSize)
             {
@@ -215,7 +216,7 @@ namespace Octree
         /// Grow the octree to fit in all objects.
         /// </summary>
         /// <param name="direction">Direction to grow.</param>
-        private void Grow(Point direction)
+        private void Grow(Vector3 direction)
         {
             int xDirection = direction.X >= 0 ? 1 : -1;
             int yDirection = direction.Y >= 0 ? 1 : -1;
@@ -223,7 +224,7 @@ namespace Octree
             Node oldRoot = _rootNode;
             float half = _rootNode.BaseLength / 2;
             float newLength = _rootNode.BaseLength * 2;
-            Point newCenter = _rootNode.Center + new Point(xDirection * half, yDirection * half, zDirection * half);
+            Vector3 newCenter = _rootNode.Center + new Vector3(xDirection * half, yDirection * half, zDirection * half);
 
             // Create a new, bigger octree root node
             _rootNode = new Node(newLength, _minSize, _looseness, newCenter);
@@ -248,7 +249,7 @@ namespace Octree
                             oldRoot.BaseLength,
                             _minSize,
                             _looseness,
-                            newCenter + new Point(xDirection * half, yDirection * half, zDirection * half));
+                            newCenter + new Vector3(xDirection * half, yDirection * half, zDirection * half));
                     }
                 }
 

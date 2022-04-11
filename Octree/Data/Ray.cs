@@ -8,6 +8,7 @@
 namespace Octree
 {
     using System;
+    using System.Numerics;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -26,20 +27,20 @@ namespace Octree
         /// Gets or sets the origin of the ray.
         /// </summary>
         [DataMember]
-        public Point Origin { get; set; }
+        public Vector3 Origin { get; set; }
 
         /// <summary>
         /// The direction of the ray.
         /// </summary>
         [DataMember]
-        private Point _direction;
+        private Vector3 _direction;
         /// <summary>
         /// Gets or sets the direction of the ray.
         /// </summary>
-        public Point Direction
+        public Vector3 Direction
         {
             get { return _direction; }
-            set { _direction = value.Normalized; }
+            set { _direction = Vector3.Normalize(value); }
         }
 
         /// <summary>
@@ -47,10 +48,10 @@ namespace Octree
         /// </summary>
         /// <param name="origin">The origin of the ray.</param>
         /// <param name="direction">The direction of the ray.</param>
-        public Ray(Point origin, Point direction)
+        public Ray(Vector3 origin, Vector3 direction)
         {
             Origin = origin;
-            _direction = direction.Normalized;
+            _direction = Vector3.Normalize(direction);
         }
 
         /// <summary>
@@ -58,7 +59,7 @@ namespace Octree
         /// </summary>
         /// <param name="distance">The distance.</param>
         /// <returns>The point on the ray.</returns>
-        public Point GetPoint(float distance)
+        public Vector3 GetPoint(float distance)
         {
             return Origin + Direction * distance;
         }

@@ -8,6 +8,7 @@
 namespace Octree
 {
     using System;
+    using System.Numerics;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -24,18 +25,18 @@ namespace Octree
         /// Gets or sets the center of the bounding box.
         /// </summary>
         [DataMember]
-        public Point Center { get; set; }
+        public Vector3 Center { get; set; }
 
         /// <summary>
         /// Gets or sets the extents of the bounding box. This is always half of the <see cref="Size"/>.
         /// </summary>
         [DataMember]
-        public Point Extents { get; set; }
+        public Vector3 Extents { get; set; }
 
         /// <summary>
         /// Gets or sets the size of the bounding box. This is always twice as large as the <see cref="Extents"/>.
         /// </summary>
-        public Point Size
+        public Vector3 Size
         {
             get { return Extents * 2; }
             set { Extents = value * 0.5f; }
@@ -47,7 +48,7 @@ namespace Octree
         /// <remarks>
         /// This is always equal to <c>center-extents</c>.
         /// </remarks>
-        public Point Min
+        public Vector3 Min
         {
             get { return Center - Extents; }
             set { SetMinMax(value, Max); }
@@ -59,7 +60,7 @@ namespace Octree
         /// <remarks>
         /// This is always equal to <c>center+extents</c>.
         /// </remarks>
-        public Point Max
+        public Vector3 Max
         {
             get { return Center + Extents; }
             set { SetMinMax(Min, value); }
@@ -70,7 +71,7 @@ namespace Octree
         /// </summary>
         /// <param name="center">The center of the box.</param>
         /// <param name="size">The size of the box.</param>
-        public BoundingBox(Point center, Point size)
+        public BoundingBox(Vector3 center, Vector3 size)
         {
             Center = center;
             Extents = size * 0.5f;
@@ -81,7 +82,7 @@ namespace Octree
         /// </summary>
         /// <param name="min">The minimal point.</param>
         /// <param name="max">The maximal point.</param>
-        public void SetMinMax(Point min, Point max)
+        public void SetMinMax(Vector3 min, Vector3 max)
         {
             Extents = (max - min) * 0.5f;
             Center = min + Extents;
@@ -91,9 +92,9 @@ namespace Octree
         /// Grows the bounding box include the point.
         /// </summary>
         /// <param name="point">The specified point to include.</param>
-        public void Encapsulate(Point point)
+        public void Encapsulate(Vector3 point)
         {
-            SetMinMax(Point.Min(Min, point), Point.Max(Max, point));
+            SetMinMax(Vector3.Min(Min, point), Vector3.Max(Max, point));
         }
 
         /// <summary>
@@ -113,14 +114,14 @@ namespace Octree
         public void Expand(float amount)
         {
             amount *= 0.5f;
-            Extents += new Point(amount, amount, amount);
+            Extents += new Vector3(amount, amount, amount);
         }
 
         /// <summary>
         /// Expands the bounds by increasing its <see cref="Size"/> by <paramref name="amount"/> along each side.
         /// </summary>
         /// <param name="amount">The expansions for each dimension in order.</param>
-        public void Expand(Point amount)
+        public void Expand(Vector3 amount)
         {
             Extents += amount * 0.5f;
         }
@@ -130,7 +131,7 @@ namespace Octree
         /// </summary>
         /// <param name="point">The point to test.</param>
         /// <returns><c>true</c> if the box contains the point; otherwise, <c>false</c>.</returns>
-        public bool Contains(Point point)
+        public bool Contains(Vector3 point)
         {
             return 
                 Min.X <= point.X && Max.X >= point.X && 
@@ -170,7 +171,7 @@ namespace Octree
         /// <returns><c>true</c> if the box intersects with the ray, <c>false</c> otherwise.</returns>
         public bool IntersectRay(Ray ray, out float distance)
         {
-            Point dirFrac = new Point(
+            Vector3 dirFrac = new Vector3(
                 1f / ray.Direction.X,
                 1f / ray.Direction.Y,
                 1f / ray.Direction.Z

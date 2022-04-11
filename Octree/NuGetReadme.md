@@ -3,25 +3,6 @@
 
 A dynamic octree implementation written in C# as a .NET Standard 2.1 library, built on the `System.Numerics` library.
 
-[![Build Status](https://github.com/mcserep/NetOctree/actions/workflows/ci.yml/badge.svg)](https://github.com/mcserep/NetOctree/actions/workflows/ci.yml)
-[![NuGet Version](https://img.shields.io/nuget/v/NetOctree)](https://www.nuget.org/packages/NetOctree/)
-[![NuGet Download](https://img.shields.io/nuget/dt/NetOctree)](https://www.nuget.org/packages/NetOctree/)
-
-How to get it?
------------
-
-The easiest way to get **NetOctree** is to install from the [NuGet package manager](https://docs.microsoft.com/hu-hu/nuget/install-nuget-client-tools).
-
-Use the Package Manager Console:
-```
-PM> Install-Package NetOctree
-```
-
-Or the `dotnet` command line interface:
-```
-dotnet add package NetOctree
-```
-
 Description
 -----------
 
@@ -103,8 +84,3 @@ pointTree.GetNearby(myRay, 4);
 pointTree.GetNearby(myPos, 4);
 ```
 - Where `myPos` is a `Vector3`
-
-
-**Potential Improvements**
-
-A significant portion of the octree's time is taken just to traverse through the nodes themselves. There's potential for a performance increase there, maybe by linearising the tree - that is, representing all the nodes as a one-dimensional array lookup.

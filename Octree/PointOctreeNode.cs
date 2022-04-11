@@ -9,6 +9,7 @@ namespace Octree
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Numerics;
     using NLog;
 
     public partial class PointOctree<T>
@@ -26,7 +27,7 @@ namespace Octree
             /// <summary>
             /// Center of this node
             /// </summary>
-            public Point Center { get; private set; }
+            public Vector3 Center { get; private set; }
 
             /// <summary>
             /// Length of the sides of this node
@@ -69,7 +70,7 @@ namespace Octree
             /// <summary>
             /// For reverting the bounds size after temporary changes
             /// </summary>
-            private Point _actualBoundsSize;
+            private Vector3 _actualBoundsSize;
 
             /// <summary>
             /// Gets a value indicating whether this node has children
@@ -92,7 +93,7 @@ namespace Octree
                 /// <summary>
                 /// Object position
                 /// </summary>
-                public Point Pos;
+                public Vector3 Pos;
             }
 
             /// <summary>
@@ -101,7 +102,7 @@ namespace Octree
             /// <param name="baseLengthVal">Length of this node, not taking looseness into account.</param>
             /// <param name="minSizeVal">Minimum size of nodes in this octree.</param>
             /// <param name="centerVal">Center position of this node.</param>
-            public Node(float baseLengthVal, float minSizeVal, Point centerVal)
+            public Node(float baseLengthVal, float minSizeVal, Vector3 centerVal)
             {
                 SetValues(baseLengthVal, minSizeVal, centerVal);
             }
@@ -114,7 +115,7 @@ namespace Octree
             /// <param name="obj">Object to add.</param>
             /// <param name="objPos">Position of the object.</param>
             /// <returns></returns>
-            public bool Add(T obj, Point objPos)
+            public bool Add(T obj, Vector3 objPos)
             {
                 if (!Encapsulates(_bounds, objPos))
                 {
@@ -169,7 +170,7 @@ namespace Octree
             /// <param name="obj">Object to remove.</param>
             /// <param name="objPos">Position of the object.</param>
             /// <returns>True if the object was removed successfully.</returns>
-            public bool Remove(T obj, Point objPos)
+            public bool Remove(T obj, Vector3 objPos)
             {
                 if (!Encapsulates(_bounds, objPos))
                 {
@@ -190,7 +191,7 @@ namespace Octree
                 // Does the ray hit this node at all?
                 // Note: Expanding the bounds is not exactly the same as a real distance check, but it's fast.
                 // TODO: Does someone have a fast AND accurate formula to do this check?
-                _bounds.Expand(new Point(maxDistance * 2, maxDistance * 2, maxDistance * 2));
+                _bounds.Expand(new Vector3(maxDistance * 2, maxDistance * 2, maxDistance * 2));
                 bool intersected = _bounds.IntersectRay(ray);
                 _bounds.Size = _actualBoundsSize;
                 if (!intersected)
@@ -224,12 +225,12 @@ namespace Octree
             /// <param name="maxDistance">Maximum distance from the position to consider.</param>
             /// <param name="result">List result.</param>
             /// <returns>Objects within range.</returns>
-            public void GetNearby(ref Point position, float maxDistance, List<T> result)
+            public void GetNearby(ref Vector3 position, float maxDistance, List<T> result)
             {
                 // Does the node contain this position at all?
                 // Note: Expanding the bounds is not exactly the same as a real distance check, but it's fast.
                 // TODO: Does someone have a fast AND accurate formula to do this check?
-                _bounds.Expand(new Point(maxDistance * 2, maxDistance * 2, maxDistance * 2));
+                _bounds.Expand(new Vector3(maxDistance * 2, maxDistance * 2, maxDistance * 2));
                 bool contained = _bounds.Contains(position);
                 _bounds.Size = _actualBoundsSize;
                 if (!contained)
@@ -240,7 +241,7 @@ namespace Octree
                 // Check against any objects in this node
                 for (int i = 0; i < _objects.Count; i++)
                 {
-                    if (Point.Distance(position, _objects[i].Pos) <= maxDistance)
+                    if (Vector3.Distance(position, _objects[i].Pos) <= maxDistance)
                     {
                         result.Add(_objects[i].Obj);
                     }
@@ -369,7 +370,7 @@ namespace Octree
             /// </summary>
             /// <param name="objPos">The object's position.</param>
             /// <returns>One of the eight child octants.</returns>
-            public int BestFitChild(Point objPos)
+            public int BestFitChild(Vector3 objPos)
             {
                 return (objPos.X <= Center.X ? 0 : 1) + (objPos.Y >= Center.Y ? 0 : 4) + (objPos.Z <= Center.Z ? 0 : 2);
             }
@@ -399,9 +400,9 @@ namespace Octree
             /// <param name="ray">The ray.</param>
             /// <param name="point">The point to check distance from the ray.</param>
             /// <returns>Squared distance from the point to the closest point of the ray.</returns>
-            public static float SqrDistanceToRay(Ray ray, Point point)
+            public static float SqrDistanceToRay(Ray ray, Vector3 point)
             {
-                return Point.Cross(ray.Direction, point - ray.Origin).SqrMagnitude;
+                return Vector3.Cross(ray.Direction, point - ray.Origin).LengthSquared();
             }
 
             // #### PRIVATE METHODS ####
@@ -412,28 +413,28 @@ namespace Octree
             /// <param name="baseLengthVal">Length of this node, not taking looseness into account.</param>
             /// <param name="minSizeVal">Minimum size of nodes in this octree.</param>
             /// <param name="centerVal">Centre position of this node.</param>
-            private void SetValues(float baseLengthVal, float minSizeVal, Point centerVal)
+            private void SetValues(float baseLengthVal, float minSizeVal, Vector3 centerVal)
             {
                 SideLength = baseLengthVal;
                 _minSize = minSizeVal;
                 Center = centerVal;
 
                 // Create the bounding box.
-                _actualBoundsSize = new Point(SideLength, SideLength, SideLength);
+                _actualBoundsSize = new Vector3(SideLength, SideLength, SideLength);
                 _bounds = new BoundingBox(Center, _actualBoundsSize);
 
                 float quarter = SideLength / 4f;
                 float childActualLength = SideLength / 2;
-                Point childActualSize = new Point(childActualLength, childActualLength, childActualLength);
+                Vector3 childActualSize = new Vector3(childActualLength, childActualLength, childActualLength);
                 _childBounds = new BoundingBox[8];
-                _childBounds[0] = new BoundingBox(Center + new Point(-quarter, quarter, -quarter), childActualSize);
-                _childBounds[1] = new BoundingBox(Center + new Point(quarter, quarter, -quarter), childActualSize);
-                _childBounds[2] = new BoundingBox(Center + new Point(-quarter, quarter, quarter), childActualSize);
-                _childBounds[3] = new BoundingBox(Center + new Point(quarter, quarter, quarter), childActualSize);
-                _childBounds[4] = new BoundingBox(Center + new Point(-quarter, -quarter, -quarter), childActualSize);
-                _childBounds[5] = new BoundingBox(Center + new Point(quarter, -quarter, -quarter), childActualSize);
-                _childBounds[6] = new BoundingBox(Center + new Point(-quarter, -quarter, quarter), childActualSize);
-                _childBounds[7] = new BoundingBox(Center + new Point(quarter, -quarter, quarter), childActualSize);
+                _childBounds[0] = new BoundingBox(Center + new Vector3(-quarter, quarter, -quarter), childActualSize);
+                _childBounds[1] = new BoundingBox(Center + new Vector3(quarter, quarter, -quarter), childActualSize);
+                _childBounds[2] = new BoundingBox(Center + new Vector3(-quarter, quarter, quarter), childActualSize);
+                _childBounds[3] = new BoundingBox(Center + new Vector3(quarter, quarter, quarter), childActualSize);
+                _childBounds[4] = new BoundingBox(Center + new Vector3(-quarter, -quarter, -quarter), childActualSize);
+                _childBounds[5] = new BoundingBox(Center + new Vector3(quarter, -quarter, -quarter), childActualSize);
+                _childBounds[6] = new BoundingBox(Center + new Vector3(-quarter, -quarter, quarter), childActualSize);
+                _childBounds[7] = new BoundingBox(Center + new Vector3(quarter, -quarter, quarter), childActualSize);
             }
 
             /// <summary>
@@ -441,7 +442,7 @@ namespace Octree
             /// </summary>
             /// <param name="obj">Object to add.</param>
             /// <param name="objPos">Position of the object.</param>
-            private void SubAdd(T obj, Point objPos)
+            private void SubAdd(T obj, Vector3 objPos)
             {
                 // We know it fits at this level if we've got this far
 
@@ -487,12 +488,12 @@ namespace Octree
             }
 
             /// <summary>
-            /// Private counterpart to the public <see cref="Remove(T, Point)"/> method.
+            /// Private counterpart to the public <see cref="Remove(T, Vector3)"/> method.
             /// </summary>
             /// <param name="obj">Object to remove.</param>
             /// <param name="objPos">Position of the object.</param>
             /// <returns>True if the object was removed successfully.</returns>
-            private bool SubRemove(T obj, Point objPos)
+            private bool SubRemove(T obj, Vector3 objPos)
             {
                 bool removed = false;
 
@@ -531,14 +532,14 @@ namespace Octree
                 float quarter = SideLength / 4f;
                 float newLength = SideLength / 2;
                 _children = new Node[8];
-                _children[0] = new Node(newLength, _minSize, Center + new Point(-quarter, quarter, -quarter));
-                _children[1] = new Node(newLength, _minSize, Center + new Point(quarter, quarter, -quarter));
-                _children[2] = new Node(newLength, _minSize, Center + new Point(-quarter, quarter, quarter));
-                _children[3] = new Node(newLength, _minSize, Center + new Point(quarter, quarter, quarter));
-                _children[4] = new Node(newLength, _minSize, Center + new Point(-quarter, -quarter, -quarter));
-                _children[5] = new Node(newLength, _minSize, Center + new Point(quarter, -quarter, -quarter));
-                _children[6] = new Node(newLength, _minSize, Center + new Point(-quarter, -quarter, quarter));
-                _children[7] = new Node(newLength, _minSize, Center + new Point(quarter, -quarter, quarter));
+                _children[0] = new Node(newLength, _minSize, Center + new Vector3(-quarter, quarter, -quarter));
+                _children[1] = new Node(newLength, _minSize, Center + new Vector3(quarter, quarter, -quarter));
+                _children[2] = new Node(newLength, _minSize, Center + new Vector3(-quarter, quarter, quarter));
+                _children[3] = new Node(newLength, _minSize, Center + new Vector3(quarter, quarter, quarter));
+                _children[4] = new Node(newLength, _minSize, Center + new Vector3(-quarter, -quarter, -quarter));
+                _children[5] = new Node(newLength, _minSize, Center + new Vector3(quarter, -quarter, -quarter));
+                _children[6] = new Node(newLength, _minSize, Center + new Vector3(-quarter, -quarter, quarter));
+                _children[7] = new Node(newLength, _minSize, Center + new Vector3(quarter, -quarter, quarter));
             }
 
             /// <summary>
@@ -569,7 +570,7 @@ namespace Octree
             /// <param name="outerBounds">Outer bounds.</param>
             /// <param name="point">Point.</param>
             /// <returns>True if innerBounds is fully encapsulated by outerBounds.</returns>
-            private static bool Encapsulates(BoundingBox outerBounds, Point point)
+            private static bool Encapsulates(BoundingBox outerBounds, Vector3 point)
             {
                 return outerBounds.Contains(point);
             }
