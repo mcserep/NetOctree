@@ -17,3 +17,6 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
+    - name: Run unit tests
+      run: dotnet test Octree.sln --collect="XPlat Code Coverage"
+    - uses: codecov/codecov-action@v2
