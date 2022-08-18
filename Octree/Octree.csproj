@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net462</TargetFrameworks>
     <PackageId>NetOctree</PackageId>
     <Description>A dynamic, loose octree implementation written in C#.</Description>
     <Company>Ericsson</Company>
