@@ -47,10 +47,10 @@ namespace Octree.Tests
         }
 
         /// <summary>
-        /// Tests the <see cref="PointOctree{T}.GetNearby" /> method.
+        /// Tests the <see cref="PointOctree{T}.GetNearby(Vector3,float)" /> method.
         /// </summary>
         [Fact]
-        public void SearchTest()
+        public void SearchByPositionTest()
         {
             // Add points
             for (int i = 1; i < 100; ++i)
@@ -74,7 +74,31 @@ namespace Octree.Tests
         }
 
         /// <summary>
-        /// Tests the <see cref="PointOctree{T}.Remove" /> method.
+        /// Tests the <see cref="PointOctree{T}.GetNearby(Octree.Ray,float)" /> method.
+        /// </summary>
+        [Fact]
+        public void SearchByRayTest()
+        {
+            // Add points
+            for (int i = 1; i < 100; ++i)
+                _octree.Add(i, new Vector3(i));
+
+            // Should find all geometries
+            _octree.GetNearby(new Ray(Vector3.Zero, Vector3.One), 0).Length.ShouldBe(_octree.Count);
+            _octree.GetNearby(new Ray(new Vector3(0, 0, 1), Vector3.One), 1).Length.ShouldBe(_octree.Count);
+
+            // Should find no geometries
+            _octree.GetNearby(new Ray(Vector3.Zero, Vector3.UnitX), 0).ShouldBeEmpty();
+            _octree.GetNearby(new Ray(Vector3.Zero, Vector3.UnitY), 0).ShouldBeEmpty();
+            _octree.GetNearby(new Ray(Vector3.Zero, Vector3.UnitZ), 0).ShouldBeEmpty();
+            _octree.GetNearby(new Ray(new Vector3(0, 0, 2), Vector3.One), 1).ShouldBeEmpty();
+
+            // Should find a single geometry
+            _octree.GetNearby(new Ray(new Vector3(100, 0, 0), new Vector3(-1, 1, 1)), 0).Length.ShouldBe(1);
+        }
+
+        /// <summary>
+        /// Tests the <see cref="PointOctree{T}.Remove(T)" /> method.
         /// </summary>
         [Fact]
         public void RemoveTest()

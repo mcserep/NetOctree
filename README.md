@@ -4,6 +4,7 @@
 A dynamic octree implementation written in C# as a .NET Standard 2.1 library, built on the `System.Numerics` library.
 
 [![Build Status](https://github.com/mcserep/NetOctree/actions/workflows/ci.yml/badge.svg)](https://github.com/mcserep/NetOctree/actions/workflows/ci.yml)
+[![Code Coverage report](https://codecov.io/gh/mcserep/NetOctree/branch/master/graph/badge.svg?token=F4OY27SOC3)](https://codecov.io/gh/mcserep/NetOctree)
 [![NuGet Version](https://img.shields.io/nuget/v/NetOctree)](https://www.nuget.org/packages/NetOctree/)
 [![NuGet Download](https://img.shields.io/nuget/dt/NetOctree)](https://www.nuget.org/packages/NetOctree/)
 
