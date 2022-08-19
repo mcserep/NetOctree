@@ -77,6 +77,11 @@ namespace Octree.Tests
 
             // Should find some geometries
             _octree.GetNearby(new Vector3(50), 10).Length.ShouldBe(11);
+
+            // Non-alloc test
+            List<int> result = new List<int>(new[] { 999 });
+            _octree.GetNearbyNonAlloc(new Vector3(50), 10, result).ShouldBeTrue();
+            result.Count.ShouldBe(11);
         }
 
         /// <summary>
@@ -101,6 +106,11 @@ namespace Octree.Tests
 
             // Should find a single geometry
             _octree.GetNearby(new Ray(new Vector3(100, 0, 0), new Vector3(-1, 1, 1)), 0).Length.ShouldBe(1);
+
+            // Non-alloc test
+            List<int> result = new List<int>(new[] { 999 });
+            _octree.GetNearbyNonAlloc(new Ray(new Vector3(100, 0, 0), new Vector3(-1, 1, 1)), 0, result).ShouldBeTrue();
+            result.Count.ShouldBe(1);
         }
 
         /// <summary>

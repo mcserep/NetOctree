@@ -103,6 +103,11 @@ namespace Octree.Tests
 
             // Should find some geometries
             _octree.GetColliding(new BoundingBox(new Vector3(50), new Vector3(50))).Length.ShouldBe(51);
+
+            // Non-alloc test
+            List<int> result = new List<int>(new[] {999});
+            _octree.GetCollidingNonAlloc(result, new BoundingBox(new Vector3(50), new Vector3(50))).ShouldBeTrue();
+            result.Count.ShouldBe(51);
         }
 
         /// <summary>
@@ -124,6 +129,11 @@ namespace Octree.Tests
             _octree.GetColliding(new Ray(new Vector3(50), Vector3.UnitX), 2).ShouldBeEmpty();
             _octree.GetColliding(new Ray(new Vector3(50), Vector3.UnitY), 2).ShouldBeEmpty();
             _octree.GetColliding(new Ray(new Vector3(50), Vector3.UnitZ), 2).ShouldBeEmpty();
+
+            // Non-alloc test
+            List<int> result = new List<int>(new[] { 999 });
+            _octree.GetCollidingNonAlloc(result, new Ray(new Vector3(50), Vector3.One), 5).ShouldBeTrue();
+            result.Count.ShouldBe(3);
         }
 
         /// <summary>
