@@ -1,12 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using Shouldly;
-using Xunit;
+// <copyright file="PointOctreeTest.cs">
+//     Distributed under the BSD Licence (see LICENCE file).
+//     Copyright (c) 2022, Máté Cserép, https://codenet.hu
+//     All rights reserved.
+// </copyright>
 
 namespace Octree.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Numerics;
+    using Shouldly;
+    using Xunit;
+
     public class PointOctreeTest
     {
         private PointOctree<int> _octree;
