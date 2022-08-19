@@ -36,7 +36,7 @@ This seems to be the standard way that loose octrees are done. I did an experime
 Example Usage
 -----------
 
-**Create An Octree**
+**Create an Octree**
 
 ```C#
 // Initial size (metres), initial centre position, minimum node size (metres), looseness
@@ -50,7 +50,7 @@ PointOctree<DataType> pointTree = new PointOctree<DataType>(15, position, 1);
 - The minimum node size is effectively a depth limit; it limits how many times the tree can divide. If all your objects are e.g. 1m+ wide, you wouldn't want to set it smaller than 1m.
 - The best way to choose a looseness value is to try different values (between 1 and maybe 1.5) and check the performance with your particular data. Generally around 1.2 is good.
 
-**Add And Remove**
+**Add and Remove**
 
 ```C#
 boundsTree.Add(myObject, myBounds);
@@ -62,25 +62,37 @@ boundsTree.Remove(myObject);
 - The object's type depends on the tree's type.
 - The bounds or point determine where it's inserted.
 
-**Built-in Functions**
+**Search in the Octree**
 
 ```C#
 bool isColliding = boundsTree.IsColliding(bounds);
 ```
 
 ```C#
-List<DataType> collidingWith = new List<DataType>();
-boundsTree.GetColliding(collidingWith, bounds);
+DataType[] collidingWith = boundsTree.GetColliding(bounds);
 ```
 - Where `DataType` is the type of the octree
 
 ```C#
-pointTree.GetNearby(myRay, 4);
+DataType[] nearby = pointTree.GetNearby(myRay, 4);
 ```
 - Where `myRay` is a `Ray`
 - In this case we're looking for any point within 4m of the closest point on the ray
 
 ```C#
-pointTree.GetNearby(myPos, 4);
+DataType[] nearby = pointTree.GetNearby(myPos, 4);
 ```
-- Where `myPos` is a `Vector3`
+- Where `myPos` is a `Vector3` from `System.Numerics`
+
+**Non-Alloc query functions**
+
+A pre-initialized list can be used to store the results, which can be useful when executing a large number of queries with potentially large result sets.
+
+```C#
+List<DataType> collidingWith = new List<DataType>();
+boundsTree.GetColliding(collidingWith, bounds);
+```
+
+```C#
+pointTree.GetNearby(myRay, 4, collidingWith);
+```

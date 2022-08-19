@@ -177,6 +177,36 @@ namespace Octree
         }
 
         /// <summary>
+        /// Returns objects that are within <paramref name="maxDistance"/> of the specified ray.
+        /// If none, returns false. Uses supplied list for results.
+        /// </summary>
+        /// <param name="ray">The ray. Passing as ref to improve performance since it won't have to be copied.</param>
+        /// <param name="maxDistance">Maximum distance from the ray to consider.</param>
+        /// <param name="nearby">Pre-initialized list to populate.</param>
+        /// <returns><c>true</c> if items are found, <c>false</c> otherwise.</returns>
+        public bool GetNearbyNonAlloc(Ray ray, float maxDistance, List<T> nearby)
+        {
+            nearby.Clear();
+            _rootNode.GetNearby(ref ray, maxDistance, nearby);
+            return nearby.Count > 0;
+        }
+
+        /// <summary>
+        /// Returns objects that are within <paramref name="maxDistance"/> of the specified position.
+        /// If none, returns false. Uses supplied list for results.
+        /// </summary>
+        /// <param name="position">The position. Passing as ref to improve performance since it won't have to be copied.</param>
+        /// <param name="maxDistance">Maximum distance from the position to consider.</param>
+        /// <param name="nearby">Pre-initialized list to populate.</param>
+        /// <returns><c>true</c> if items are found, <c>false</c> otherwise.</returns>
+        public bool GetNearbyNonAlloc(Vector3 position, float maxDistance, List<T> nearby)
+        {
+            nearby.Clear();
+            _rootNode.GetNearby(ref position, maxDistance, nearby);
+            return nearby.Count > 0;
+        }
+
+        /// <summary>
         /// Returns all objects in the tree.
         /// If none, returns an empty array (not null).
         /// </summary>

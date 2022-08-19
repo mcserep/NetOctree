@@ -53,7 +53,7 @@ namespace Octree.Tests
         }
 
         /// <summary>
-        /// Tests the <see cref="BoundsOctree{T}.IsColliding" /> method.
+        /// Tests the <see cref="BoundsOctree{T}.IsColliding(Octree.BoundingBox)" /> method.
         /// </summary>
         [Fact]
         public void CollisionTest()
@@ -84,7 +84,7 @@ namespace Octree.Tests
         }
 
         /// <summary>
-        /// Tests the <see cref="BoundsOctree{T}.GetColliding(List{T},Octree.BoundingBox)" /> method.
+        /// Tests the <see cref="BoundsOctree{T}.GetColliding(Octree.BoundingBox)" /> method.
         /// </summary>
         [Fact]
         public void SearchByPositionTest()
@@ -94,26 +94,19 @@ namespace Octree.Tests
                 _octree.Add(i, new BoundingBox(new Vector3(i), Vector3.Zero));
 
             // Should be empty for bounding boxes that do not contain any of the geometries
-            List<int> result = new List<int>();
-            _octree.GetColliding(result, new BoundingBox(new Vector3(0.5f), new Vector3(0.2f)));
-            result.ShouldBeEmpty();
-            _octree.GetColliding(result, new BoundingBox(new Vector3(100), Vector3.One));
-            result.ShouldBeEmpty();
-            _octree.GetColliding(result, new BoundingBox(new Vector3(200), new Vector3(20)));
-            result.ShouldBeEmpty();
+            _octree.GetColliding(new BoundingBox(new Vector3(0.5f), new Vector3(0.2f))).ShouldBeEmpty();
+            _octree.GetColliding(new BoundingBox(new Vector3(100), Vector3.One)).ShouldBeEmpty();
+            _octree.GetColliding(new BoundingBox(new Vector3(200), new Vector3(20))).ShouldBeEmpty();
 
             // Should find all geometries
-            _octree.GetColliding(result, new BoundingBox(new Vector3(50), new Vector3(100)));
-            result.Count.ShouldBe(_octree.Count);
-            result.Clear();
+            _octree.GetColliding(new BoundingBox(new Vector3(50), new Vector3(100))).Length.ShouldBe(_octree.Count);
 
             // Should find some geometries
-            _octree.GetColliding(result, new BoundingBox(new Vector3(50), new Vector3(50)));
-            result.Count.ShouldBe(51);
+            _octree.GetColliding(new BoundingBox(new Vector3(50), new Vector3(50))).Length.ShouldBe(51);
         }
 
         /// <summary>
-        /// Tests the <see cref="BoundsOctree{T}.GetColliding(List{T},Octree.Ray,float)" /> method.
+        /// Tests the <see cref="BoundsOctree{T}.GetColliding(Octree.Ray,float)" /> method.
         /// </summary>
         [Fact]
         public void SearchByRayTest()
@@ -123,26 +116,18 @@ namespace Octree.Tests
                 _octree.Add(i, new BoundingBox(new Vector3(i), Vector3.Zero));
 
             // Should find some geometries (distance measured from origin of ray)
-            List<int> result = new List<int>();
-            _octree.GetColliding(result, new Ray(Vector3.Zero, Vector3.One), 2);
-            result.Count.ShouldBe(1);
-            result.Clear();
-            _octree.GetColliding(result, new Ray(Vector3.Zero, Vector3.One), 5);
-            result.Count.ShouldBe(2);
-            result.Clear();
-            _octree.GetColliding(result, new Ray(new Vector3(50), Vector3.One), 5);
-            result.Count.ShouldBe(3);
-            result.Clear();
+            _octree.GetColliding(new Ray(Vector3.Zero, Vector3.One), 2).Length.ShouldBe(1);
+            _octree.GetColliding(new Ray(Vector3.Zero, Vector3.One), 5).Length.ShouldBe(2);
+            _octree.GetColliding(new Ray(new Vector3(50), Vector3.One), 5).Length.ShouldBe(3);
 
             // Should find no geometries
-            _octree.GetColliding(result, new Ray(new Vector3(50), Vector3.UnitX), 2);
-            _octree.GetColliding(result, new Ray(new Vector3(50), Vector3.UnitY), 2);
-            _octree.GetColliding(result, new Ray(new Vector3(50), Vector3.UnitZ), 2);
-            result.ShouldBeEmpty();
+            _octree.GetColliding(new Ray(new Vector3(50), Vector3.UnitX), 2).ShouldBeEmpty();
+            _octree.GetColliding(new Ray(new Vector3(50), Vector3.UnitY), 2).ShouldBeEmpty();
+            _octree.GetColliding(new Ray(new Vector3(50), Vector3.UnitZ), 2).ShouldBeEmpty();
         }
 
         /// <summary>
-        /// Tests the <see cref="BoundsOctree{T}.Remove" /> method.
+        /// Tests the <see cref="BoundsOctree{T}.Remove(T)" /> method.
         /// </summary>
         [Fact]
         public void RemoveTest()

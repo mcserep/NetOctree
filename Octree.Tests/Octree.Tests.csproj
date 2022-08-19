@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Máté Cserép</Authors>
+    <Copyright>Copyright © Máté Cserép 2022</Copyright>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>

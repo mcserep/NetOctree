@@ -188,26 +188,63 @@ namespace Octree
         }
 
         /// <summary>
-        /// Returns an array of objects that intersect with the specified bounds, if any. Otherwise returns an empty array. See also: IsColliding.
+        /// Returns an array of objects that intersect with the specified bounds, if any.
+        /// Otherwise returns an empty array.
         /// </summary>
-        /// <param name="collidingWith">list to store intersections.</param>
+        /// <seealso cref="IsColliding(Octree.BoundingBox)"/>
         /// <param name="checkBounds">bounds to check.</param>
         /// <returns>Objects that intersect with the specified bounds.</returns>
-        public void GetColliding(List<T> collidingWith, BoundingBox checkBounds)
+        public T[] GetColliding(BoundingBox checkBounds)
         {
+            List<T> collidingWith = new List<T>();
             _rootNode.GetColliding(ref checkBounds, collidingWith);
+            return collidingWith.ToArray();
         }
 
         /// <summary>
-        /// Returns an array of objects that intersect with the specified ray, if any. Otherwise returns an empty array. See also: IsColliding.
+        /// Returns an array of objects that intersect with the specified ray, if any.
+        /// Otherwise returns an empty array.
         /// </summary>
-        /// <param name="collidingWith">list to store intersections.</param>
+        /// <seealso cref="IsColliding(Octree.BoundingBox)"/>
         /// <param name="checkRay">ray to check.</param>
         /// <param name="maxDistance">distance to check.</param>
         /// <returns>Objects that intersect with the specified ray.</returns>
-        public void GetColliding(List<T> collidingWith, Ray checkRay, float maxDistance = float.PositiveInfinity)
+        public T[] GetColliding(Ray checkRay, float maxDistance = float.PositiveInfinity)
         {
+            List<T> collidingWith = new List<T>();
             _rootNode.GetColliding(ref checkRay, collidingWith, maxDistance);
+            return collidingWith.ToArray();
+        }
+
+        /// <summary>
+        /// Returns an array of objects that intersect with the specified bounds, if any.
+        /// Otherwise returns an empty array.
+        /// </summary>
+        /// <seealso cref="IsColliding(Octree.BoundingBox)"/>
+        /// <param name="collidingWith">list to store intersections.</param>
+        /// <param name="checkBounds">bounds to check.</param>
+        /// <returns><c>true</c> if items are found, <c>false</c> otherwise.</returns>
+        public bool GetCollidingNonAlloc(List<T> collidingWith, BoundingBox checkBounds)
+        {
+            collidingWith.Clear();
+            _rootNode.GetColliding(ref checkBounds, collidingWith);
+            return collidingWith.Count > 0;
+        }
+
+        /// <summary>
+        /// Returns an array of objects that intersect with the specified ray, if any.
+        /// Otherwise returns an empty array.
+        /// </summary>
+        /// <seealso cref="IsColliding(Octree.BoundingBox)"/>
+        /// <param name="collidingWith">list to store intersections.</param>
+        /// <param name="checkRay">ray to check.</param>
+        /// <param name="maxDistance">distance to check.</param>
+        /// <returns><c>true</c> if items are found, <c>false</c> otherwise.</returns>
+        public bool GetCollidingNonAlloc(List<T> collidingWith, Ray checkRay, float maxDistance = float.PositiveInfinity)
+        {
+            collidingWith.Clear();
+            _rootNode.GetColliding(ref checkRay, collidingWith, maxDistance);
+            return collidingWith.Count > 0;
         }
 
         // #### PRIVATE METHODS ####
