@@ -10,7 +10,6 @@ namespace Octree
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
-    using NLog;
 
     public partial class PointOctree<T>
     {
@@ -22,7 +21,7 @@ namespace Octree
             /// <summary>
             /// The logger
             /// </summary>
-            private static readonly Logger Logger = LogManager.GetLogger("octree");
+            private static readonly Logger Logger = LogManager.GetLogger();
 
             /// <summary>
             /// Center of this node
