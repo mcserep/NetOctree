@@ -69,7 +69,9 @@ namespace Octree
         /// <returns></returns>
         public BoundingBox[] GetChildBounds()
         {
-            return _rootNode.GetChildBounds().ToArray();
+            var bounds = new List<BoundingBox>();
+            _rootNode.GetChildBounds(bounds);
+            return bounds.ToArray();
         }
 
         /// <summary>

@@ -107,21 +107,18 @@ namespace Octree
             /// <summary>
             /// Gets All the bounding box that represents this node
             /// </summary>
-            /// <returns></returns>
-            public List<BoundingBox> GetChildBounds()
+            /// <param name="bounds"></param>
+            public void GetChildBounds(List<BoundingBox> bounds)
             {
-                var list = new List<BoundingBox>();
                 if (HasChildren)
                 {
                     foreach (var child in _children)
                     {
-                        list.AddRange(child.GetChildBounds());
+                        child.GetChildBounds(bounds);
                     }
-                    return list;
+                    return;
                 }
-
-                list.Add(Bounds);
-                return list;
+                bounds.Add(Bounds);
             }
 
             /// <summary>
