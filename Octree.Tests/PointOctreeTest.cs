@@ -6,11 +6,11 @@
 
 namespace Octree.Tests
 {
+    using Shouldly;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
-    using Shouldly;
     using Xunit;
 
     public class PointOctreeTest
@@ -140,6 +140,23 @@ namespace Octree.Tests
             for (int i = 1; i < 100; ++i)
                 _octree.Remove(i, new Vector3(i)).ShouldBeTrue();
             _octree.Count.ShouldBe(0);
+        }
+
+        /// <summary>
+        /// Tests the <see cref="BoundsOctree{T}.GetChildBounds" /> method.
+        /// </summary>
+        [Fact]
+        public void ChildBoundsTest()
+        {
+            // Should be only one bound
+            _octree.GetChildBounds().Length.ShouldBe(1);
+
+            // Add points
+            for (int i = 1; i < 100; ++i)
+                _octree.Add(i, new Vector3(i));
+
+            // Should be 127 bound
+            _octree.GetChildBounds().Length.ShouldBe(127);
         }
     }
 }

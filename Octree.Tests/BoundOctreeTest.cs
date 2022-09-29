@@ -6,11 +6,11 @@
 
 namespace Octree.Tests
 {
+    using Shouldly;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
-    using Shouldly;
     using Xunit;
 
     public class BoundOctreeTest
@@ -105,7 +105,7 @@ namespace Octree.Tests
             _octree.GetColliding(new BoundingBox(new Vector3(50), new Vector3(50))).Length.ShouldBe(51);
 
             // Non-alloc test
-            List<int> result = new List<int>(new[] {999});
+            List<int> result = new List<int>(new[] { 999 });
             _octree.GetCollidingNonAlloc(result, new BoundingBox(new Vector3(50), new Vector3(50))).ShouldBeTrue();
             result.Count.ShouldBe(51);
         }
@@ -163,6 +163,23 @@ namespace Octree.Tests
             for (int i = 1; i < 100; ++i)
                 _octree.Remove(i, new BoundingBox(new Vector3(i), new Vector3(0.5f))).ShouldBeTrue();
             _octree.Count.ShouldBe(0);
+        }
+
+        /// <summary>
+        /// Tests the <see cref="BoundsOctree{T}.GetChildBounds" /> method.
+        /// </summary>
+        [Fact]
+        public void ChildBoundsTest()
+        {
+            // Should be only one bound
+            _octree.GetChildBounds().Length.ShouldBe(1);
+
+            // Add points
+            for (int i = 1; i < 100; ++i)
+                _octree.Add(i, new BoundingBox(new Vector3(i), Vector3.One));
+
+            // Should be 127 bound
+            _octree.GetChildBounds().Length.ShouldBe(127);
         }
     }
 }

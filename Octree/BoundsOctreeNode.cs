@@ -7,9 +7,9 @@
 // </copyright>
 namespace Octree
 {
+    using NLog;
     using System.Collections.Generic;
     using System.Numerics;
-    using NLog;
 
     public partial class BoundsOctree<T>
     {
@@ -106,6 +106,23 @@ namespace Octree
             public BoundingBox Bounds
             {
                 get { return _bounds; }
+            }
+
+            /// <summary>
+            /// Gets All the bounding box that represents this node
+            /// </summary>
+            /// <param name="bounds"></param>
+            public void GetChildBounds(List<BoundingBox> bounds)
+            {
+                if (HasChildren)
+                {
+                    foreach (var child in _children)
+                    {
+                        child.GetChildBounds(bounds);
+                    }
+                    return;
+                }
+                bounds.Add(Bounds);
             }
 
             /// <summary>

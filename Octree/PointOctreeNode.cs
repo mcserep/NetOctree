@@ -7,10 +7,10 @@
 // </copyright>
 namespace Octree
 {
+    using NLog;
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
-    using NLog;
 
     public partial class PointOctree<T>
     {
@@ -94,6 +94,31 @@ namespace Octree
                 /// Object position
                 /// </summary>
                 public Vector3 Pos;
+            }
+
+            /// <summary>
+            /// Gets the bounding box that represents this node
+            /// </summary>
+            public BoundingBox Bounds
+            {
+                get { return _bounds; }
+            }
+
+            /// <summary>
+            /// Gets All the bounding box that represents this node
+            /// </summary>
+            /// <param name="bounds"></param>
+            public void GetChildBounds(List<BoundingBox> bounds)
+            {
+                if (HasChildren)
+                {
+                    foreach (var child in _children)
+                    {
+                        child.GetChildBounds(bounds);
+                    }
+                    return;
+                }
+                bounds.Add(Bounds);
             }
 
             /// <summary>

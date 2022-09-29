@@ -7,9 +7,9 @@
 // </copyright>
 namespace Octree
 {
+    using NLog;
     using System.Collections.Generic;
     using System.Numerics;
-    using NLog;
 
     /// <summary>
     /// A Dynamic, Loose Octree for storing any objects that can be described with AABB bounds
@@ -65,18 +65,29 @@ namespace Octree
         /// </summary>
         private readonly float _minSize;
 
-	    /// <summary>
-	    /// The total amount of objects currently in the tree
-	    /// </summary>
-	    public int Count { get; private set; }
+        /// <summary>
+        /// The total amount of objects currently in the tree
+        /// </summary>
+        public int Count { get; private set; }
 
-		/// <summary>
-		/// Gets the bounding box that represents the whole octree
-		/// </summary>
-		/// <value>The bounding box of the root node.</value>
-		public BoundingBox MaxBounds
+        /// <summary>
+        /// Gets the bounding box that represents the whole octree
+        /// </summary>
+        /// <value>The bounding box of the root node.</value>
+        public BoundingBox MaxBounds
         {
             get { return _rootNode.Bounds; }
+        }
+
+        /// <summary>
+        /// Gets All the bounding box that represents the whole octree
+        /// </summary>
+        /// <returns></returns>
+        public BoundingBox[] GetChildBounds()
+        {
+            var bounds = new List<BoundingBox>();
+            _rootNode.GetChildBounds(bounds);
+            return bounds.ToArray();
         }
 
         /// <summary>
