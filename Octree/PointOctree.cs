@@ -5,9 +5,10 @@
 //     Copyright (c) 2017, Máté Cserép, http://codenet.hu
 //     All rights reserved.
 // </copyright>
+
 namespace Octree
 {
-    using NLog;
+    using System;
     using System.Collections.Generic;
     using System.Numerics;
 
@@ -29,11 +30,6 @@ namespace Octree
     /// <typeparam name="T">The content of the octree can be anything, since the bounds data is supplied separately.</typeparam>
     public partial class PointOctree<T>
     {
-        /// <summary>
-        /// The logger
-        /// </summary>
-        private static readonly Logger Logger = LogManager.GetLogger("octree");
-
         /// <summary>
         /// Root node of the octree
         /// </summary>
@@ -80,15 +76,13 @@ namespace Octree
         /// <param name="initialWorldSize">Size of the sides of the initial node. The octree will never shrink smaller than this.</param>
         /// <param name="initialWorldPos">Position of the centre of the initial node.</param>
         /// <param name="minNodeSize">Nodes will stop splitting if the new nodes would be smaller than this.</param>
+        /// <exception cref="ArgumentException">Minimum node size must be at least as big as the initial world size.</exception>
         public PointOctree(float initialWorldSize, Vector3 initialWorldPos, float minNodeSize)
         {
             if (minNodeSize > initialWorldSize)
-            {
-                Logger.Warn(
-                    "Minimum node size must be at least as big as the initial world size. Was: " + minNodeSize
-                    + " Adjusted to: " + initialWorldSize);
-                minNodeSize = initialWorldSize;
-            }
+                throw new ArgumentException("Minimum node size must be at least as big as the initial world size.",
+                    nameof(minNodeSize));
+
             Count = 0;
             _initialSize = initialWorldSize;
             _minSize = minNodeSize;
@@ -102,6 +96,7 @@ namespace Octree
         /// </summary>
         /// <param name="obj">Object to add.</param>
         /// <param name="objPos">Position of the object.</param>
+        /// <exception cref="InvalidOperationException">Add operation required growing the octree too much.</exception>
         public void Add(T obj, Vector3 objPos)
         {
             // Add object or expand the octree until it can be added
@@ -111,10 +106,8 @@ namespace Octree
                 Grow(objPos - _rootNode.Center);
                 if (++count > 20)
                 {
-                    Logger.Error(
-                        "Aborted Add operation as it seemed to be going on forever (" + (count - 1)
-                        + ") attempts at growing the octree.");
-                    return;
+                    throw new InvalidOperationException($"Aborted Add operation as it seemed to be going on forever " +
+                                                        $"({count - 1} attempts at growing the octree).");
                 }
             }
             Count++;

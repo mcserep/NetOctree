@@ -5,9 +5,10 @@
 //     Copyright (c) 2017, Máté Cserép, http://codenet.hu
 //     All rights reserved.
 // </copyright>
+
 namespace Octree
 {
-    using NLog;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
@@ -19,11 +20,6 @@ namespace Octree
         /// </summary>
         private class Node
         {
-            /// <summary>
-            /// The logger
-            /// </summary>
-            private static readonly Logger Logger = LogManager.GetLogger("octree");
-
             /// <summary>
             /// Center of this node
             /// </summary>
@@ -309,8 +305,8 @@ namespace Octree
             {
                 if (childOctrees.Length != 8)
                 {
-                    Logger.Error("Child octree array must be length 8. Was length: " + childOctrees.Length);
-                    return;
+                    throw new ArgumentException("Child octree array must be length 8. Was length: " + childOctrees.Length,
+                        nameof(childOctrees));
                 }
 
                 _children = childOctrees;
@@ -489,10 +485,7 @@ namespace Octree
                     {
                         Split();
                         if (_children == null)
-                        {
-                            Logger.Error("Child creation failed for an unknown reason. Early exit.");
-                            return;
-                        }
+                            throw new InvalidOperationException("Child creation failed for an unknown reason. Early exit.");
 
                         // Now that we have the new children, move this node's existing objects into them
                         for (int i = _objects.Count - 1; i >= 0; i--)
