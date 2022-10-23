@@ -35,6 +35,15 @@ namespace Octree.Tests
         }
 
         /// <summary>
+        /// Constructor test with invalid arguments.
+        /// </summary>
+        [Fact]
+        public void BadConstructorTest()
+        {
+            Assert.Throws<ArgumentException>(() => new BoundsOctree<int>(50, Vector3.Zero, 100, 1.0f));
+        }
+
+        /// <summary>
         /// Tests the <see cref="BoundsOctree{T}.Add" /> method.
         /// </summary>
         [Fact]
